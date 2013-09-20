@@ -1,4 +1,4 @@
-if not %w(etch lenny lucid precise sid squeeze wheezy).include? node['postgresql']['pgdg']['release_apt_codename']
+if not %w(etch lenny lucid precise sid squeeze wheezy raring).include? node['postgresql']['pgdg']['release_apt_codename']
   raise "Not supported release by PGDG apt repository"
 end
 
@@ -9,9 +9,12 @@ file "remove deprecated Pitti PPA apt repository" do
   path "/etc/apt/sources.list.d/pitti-postgresql-ppa"
 end
 
+dist = node['postgresql']['pgdg']['release_apt_codename']
+dist = 'wheezy' if dist == 'raring'
+
 apt_repository 'apt.postgresql.org' do
   uri 'http://apt.postgresql.org/pub/repos/apt'
-  distribution "#{node['postgresql']['pgdg']['release_apt_codename']}-pgdg"
+  distribution "#{dist}-pgdg"
   components %w(main)
   key 'http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc'
   action :add
